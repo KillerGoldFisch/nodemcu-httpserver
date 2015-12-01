@@ -4,9 +4,12 @@
 -- Starts web server in the specified port.
 return function (port)
 
-   local s = net.createServer(net.TCP, 10) -- 10 seconds client timeout
-   s:listen(
-      port,
+   --local s = net.createServer(net.TCP, 10) -- 10 seconds client timeout
+   local s = net.new(net.TCP, net.SERVER)
+   net.start(s, port)
+   net.on(
+	  s,
+      "",
       function (connection)
 
          -- This variable holds the thread used for sending data back to the user.

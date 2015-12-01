@@ -8,8 +8,8 @@ local wifiConfig = {}
 wifiConfig.mode = wifi.STATIONAP  -- both station and access point
 
 wifiConfig.accessPointConfig = {}
-wifiConfig.accessPointConfig.ssid = "ESP-"..node.chipid()   -- Name of the SSID you want to create
-wifiConfig.accessPointConfig.pwd = "ESP-"..node.chipid()    -- WiFi password - at least 8 characters
+wifiConfig.accessPointConfig.ssid = "ESP-"..mcu.chipid()   -- Name of the SSID you want to create
+wifiConfig.accessPointConfig.pwd = "ESP-"..mcu.chipid()    -- WiFi password - at least 8 characters
 
 wifiConfig.accessPointIpConfig = {}
 wifiConfig.accessPointIpConfig.ip = "192.168.111.1"
@@ -17,28 +17,30 @@ wifiConfig.accessPointIpConfig.netmask = "255.255.255.0"
 wifiConfig.accessPointIpConfig.gateway = "192.168.111.1"
 
 wifiConfig.stationPointConfig = {}
-wifiConfig.stationPointConfig.ssid = "Internet"        -- Name of the WiFi network you want to join
-wifiConfig.stationPointConfig.pwd =  ""                -- Password for the WiFi network
+wifiConfig.stationPointConfig.ssid = "d-_-b"        -- Name of the WiFi network you want to join
+wifiConfig.stationPointConfig.pwd =  "9a4bc9a4"                -- Password for the WiFi network
 
 -- Tell the chip to connect to the access point
 
-wifi.setmode(wifiConfig.mode)
-print('set (mode='..wifi.getmode()..')')
+--wifi.setmode(wifiConfig.mode)
+--print('set (mode='..wifi.getmode()..')')
 
 if (wifiConfig.mode == wifi.SOFTAP) or (wifiConfig.mode == wifi.STATIONAP) then
-    print('AP MAC: ',wifi.ap.getmac())
-    wifi.ap.config(wifiConfig.accessPointConfig)
-    wifi.ap.setip(wifiConfig.accessPointIpConfig)
+    --print('AP MAC: ',wifi.ap.getmac())
+    --wifi.ap.config(wifiConfig.accessPointConfig)
+    wifi.startap(wifiConfig.accessPointConfig)
+    print('AP IP: ',wifi.ap.getip())
 end
 if (wifiConfig.mode == wifi.STATION) or (wifiConfig.mode == wifi.STATIONAP) then
-    print('Client MAC: ',wifi.sta.getmac())
-    wifi.sta.config(wifiConfig.stationPointConfig.ssid, wifiConfig.stationPointConfig.pwd, 1)
+    --print('Client MAC: ',wifi.sta.getmac())
+    --wifi.sta.config(wifiConfig.stationPointConfig.ssid, wifiConfig.stationPointConfig.pwd, 1)
+    wifi.startsta(wifiConfig.stationPointConfig)
 end
 
-print('chip: ',node.chipid())
-print('heap: ',node.heap())
+print('chip: ',mcu.chipid())
+print('heap: ',mcu.mem())
 
-wifiConfig = nil
+--wifiConfig = nil
 collectgarbage()
 
 -- End WiFi configuration
@@ -50,7 +52,7 @@ local compileAndRemoveIfNeeded = function(f)
    if file.open(f) then
       file.close()
       print('Compiling:', f)
-      node.compile(f)
+      file.compile(f)
       file.remove(f)
       collectgarbage()
    end
@@ -66,10 +68,10 @@ collectgarbage()
 -- Connect to the WiFi access point.
 -- Once the device is connected, you may start the HTTP server.
 
-if (wifi.getmode() == wifi.STATION) or (wifi.getmode() == wifi.STATIONAP) then
+if (wifiConfig.mode == wifi.STATION) or (wifiConfig.mode == wifi.STATIONAP) then
     local joinCounter = 0
     local joinMaxAttempts = 5
-    tmr.alarm(0, 3000, 1, function()
+    tmr.start(0, 3000, function()
        local ip = wifi.sta.getip()
        if ip == nil and joinCounter < joinMaxAttempts then
           print('Connecting to WiFi Access Point ...')

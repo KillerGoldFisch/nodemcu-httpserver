@@ -1,0 +1,23 @@
+{
+    "version": "0.1.0",
+    "command": "scons",
+    "isShellCommand": true,
+	"showOutput": "always",
+    "tasks": [
+        {
+            "taskName": "all",
+            "args": ["-Q","all"],
+            "isBuildCommand": true
+        },
+		        {
+            "taskName": "Server",
+            "args": ["-Q server"],
+            "isBuildCommand": false
+        },
+		{
+            "taskName": "Http",
+            "args": ["-Q http"],
+            "isBuildCommand": false
+        }
+    ]
+}

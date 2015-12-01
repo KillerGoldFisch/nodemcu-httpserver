@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />  
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Gliewe - Füllstand</title>
+    <meta name="application-name" content="Füllstand" /> 
+    
+    <!--<link rel="shortcut icon" href="/icon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/icon.png">-->
+    <script type="text/javascript" src="./smoothie.js"></script>
+    <script type="text/javascript">
+      var xmlHttp = null;
+      var series = new TimeSeries();
+
+      setInterval(function() {
+         var url = "/adc_get.lc";
+
+         xmlHttp = new XMLHttpRequest();
+         xmlHttp.onreadystatechange = processRequest;
+         xmlHttp.open("GET", url, true);
+         xmlHttp.send( null );
+      }, 1000);
+      
+      function createTimeline() {
+        var chart = new SmoothieChart({millisPerPixel:150,grid:{fillStyle:'transparent',strokeStyle:'#c0c0c0',sharpLines:true,verticalSections:0},maxValue:1024,minValue:0}),
+          canvas = document.getElementById('smoothie-chart');
+
+          chart.addTimeSeries(series, {lineWidth:2,strokeStyle:'#000000',fillStyle:'#0000ff'});
+          chart.streamTo(canvas, 500);
+      }
+
+      function processRequest()
+      {
+        if(xmlHttp.readyState == 4)
+         {
+            if(xmlHttp.status == 200)
+            {
+                var obj = JSON.parse(xmlHttp.responseText);
+                series.append(new Date().getTime(), obj.value);
+            }
+         }
+      }
+    </script>
+  </head>
+  <body onload="createTimeline()">
+    <!--<div id="logo"><a href="/index.html" style="border:none;" title="Go back to main page"><img alt="Logo Site" src="/logo.png" /></a></div>-->
+    <h1>Füllstand</h1>
+    <canvas id="smoothie-chart" width="750" height="150">
+
+  </body>
+</html> 
