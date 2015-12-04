@@ -108,13 +108,19 @@ end
 -- Parses the client's request. Returns a dictionary containing pretty much everything
 -- the server needs to know about the uri.
 return function (request)
+	print("111")
    local e = request:find("\r\n", 1, true)
    if not e then return nil end
    local line = request:sub(1, e - 1)
+   print("115")
    local r = {}
    _, i, r.method, r.request = line:find("^([A-Z]+) (.-) HTTP/[1-9]+.[0-9]+$")
+   print("118")
    r.methodIsValid = validateMethod(r.method)
+   print("120")
    r.uri = parseUri(r.request)
+   print("122")
    r.getRequestData = getRequestData(request)
+   print("124")
    return r
 end

@@ -58,8 +58,8 @@ local compileAndRemoveIfNeeded = function(f)
    end
 end
 
-local serverFiles = {'httpserver.lua', 'httpserver-basicauth.lua', 'httpserver-conf.lua', 'httpserver-b64decode.lua', 'httpserver-request.lua', 'httpserver-static.lua', 'httpserver-header.lua', 'httpserver-error.lua'}
-for i, f in ipairs(serverFiles) do compileAndRemoveIfNeeded(f) end
+--local serverFiles = {'httpserver.lua', 'httpserver-basicauth.lua', 'httpserver-conf.lua', 'httpserver-b64decode.lua', 'httpserver-request.lua', 'httpserver-static.lua', 'httpserver-header.lua', 'httpserver-error.lua'}
+--for i, f in ipairs(serverFiles) do compileAndRemoveIfNeeded(f) end
 
 compileAndRemoveIfNeeded = nil
 serverFiles = nil
@@ -70,10 +70,10 @@ collectgarbage()
 
 if (wifiConfig.mode == wifi.STATION) or (wifiConfig.mode == wifi.STATIONAP) then
     local joinCounter = 0
-    local joinMaxAttempts = 5
+    local joinMaxAttempts = 10
     tmr.start(0, 3000, function()
        local ip = wifi.sta.getip()
-       if ip == nil and joinCounter < joinMaxAttempts then
+       if (ip == nil or ip == "0.0.0.0") and joinCounter < joinMaxAttempts then
           print('Connecting to WiFi Access Point ...')
           joinCounter = joinCounter +1
        else
